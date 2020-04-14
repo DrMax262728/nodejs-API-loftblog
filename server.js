@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // data
 const artists = [
@@ -21,22 +22,32 @@ const artists = [
   }
 ];
 
-
 // routes
 app.get('/', (request, response) => {
-  response.send('HELLO API!');
+  response.send('HELLO API!')
 });
 
 app.get('/artists', (request, response) => {
-  response.send(artists);
+  response.send(artists)
 });
 
 app.get('/artist/:id', (request, response) => {
   console.log(request.params);
   const artist = artists.find( (artist) => artist.id === request.params.id);
-  response.send(artist);
+  response.send(artist)
 });
 
+app.post('/artists', (request, response) => {
+  const artist = {
+    id: Date.now(),
+    name: request.body.name
+  };
+
+  artists.push(artist);
+  response.send("post data")
+});
+
+app.
 
 // start server
 app.listen(3737, () => {
