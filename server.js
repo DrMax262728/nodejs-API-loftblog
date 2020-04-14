@@ -1,7 +1,11 @@
 const express = require("express");
+const bodyParser = require('body-parser');
 
 const app = express();
 
+app.use(bodyParser.json());
+
+// data
 const artists = [
   {
     id: 'id_1',
@@ -17,6 +21,8 @@ const artists = [
   }
 ];
 
+
+// routes
 app.get('/', (request, response) => {
   response.send('HELLO API!');
 });
@@ -31,6 +37,8 @@ app.get('/artist/:id', (request, response) => {
   response.send(artist);
 });
 
+
+// start server
 app.listen(3737, () => {
   console.log('API app started!')
 });
