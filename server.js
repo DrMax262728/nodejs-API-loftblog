@@ -7,7 +7,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // data
-const artists = [
+let artists = [
   {
     id: 'id_1',
     name: 'Metalica'
@@ -47,7 +47,16 @@ app.post('/artists', (request, response) => {
   response.send("post data")
 });
 
-app.
+app.put('/artist/:id', (request, response) => {
+  const artist = artists.find( (artist) => artist.id === request.params.id);
+  artist.name = request.body.name
+  response.sendStatus(200)
+})
+
+app.delete('/artist/:id', (request, response) => {
+  artists = artists.filter( ( artist ) => artist.id !== request.params.id )
+  response.sendStatus(200)
+})
 
 // start server
 app.listen(3737, () => {
