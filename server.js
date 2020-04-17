@@ -1,7 +1,9 @@
 const express = require("express");
 const bodyParser = require('body-parser');
+const MongoClient = require('mongodb').MongoClient;
 
 const app = express();
+let db;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,7 +30,14 @@ app.get('/', (request, response) => {
 });
 
 app.get('/artists', (request, response) => {
-  response.send(artists)
+  db.collection('artists').find().toArray( (err, docs) => {
+    if (err) {
+      console.log(err);
+      response.sendStatus(500)
+    }
+
+    response.send(docs)
+  })
 });
 
 app.get('/artist/:id', (request, response) => {
@@ -37,14 +46,19 @@ app.get('/artist/:id', (request, response) => {
   response.send(artist)
 });
 
-app.post('/artists', (request, response) => {
+app.post('/artists', async (request, response) => {
   const artist = {
-    id: Date.now(),
     name: request.body.name
   };
 
-  artists.push(artist);
-  response.send("post data")
+  await db.collection('artists').insertOne(artist, (err, result) => {
+    if (err) {
+      console.log(err);
+      return response.sendStatus(500);
+    }
+
+    response.send(artist)
+  })
 });
 
 app.put('/artist/:id', (request, response) => {
@@ -56,9 +70,18 @@ app.put('/artist/:id', (request, response) => {
 app.delete('/artist/:id', (request, response) => {
   artists = artists.filter( ( artist ) => artist.id !== request.params.id )
   response.sendStatus(200)
-})
+});
+
+MongoClient.connect('mongodb://localhost',(err, client) => {
+  if (err) {
+    return console.log(err)
+  }
+
+  db = client.db('maxapi');
 
 // start server
 app.listen(3737, () => {
   console.log('API app started!')
+});
+
 });
